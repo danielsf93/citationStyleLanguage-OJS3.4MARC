@@ -259,22 +259,19 @@
    
     {assign var="oitoCincoMeiaA" value="4 zClicar sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
 
-{$publicationFiles=$bookFiles}
-{foreach from=$publicationFormats item=format}
-    {pluck_files assign=pubFormatFiles files=$publicationFiles by="publicationFormat" value=$format->getId()}
-    {foreach from=$pubFormatFiles item=file}
-        {assign var=publicationFormatId value=$publicationFormat->getBestId()}
-
-        {* Generate the download URL *}
-        {if $publication->getId() === $monograph->getCurrentPublication()->getId()}
-            {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:$publicationFormatId:$file->getBestId()}{/capture}
-        {else}
-            {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:"version":$publication->getId():$publicationFormatId:$file->getBestId()}{/capture}
+{assign var="linkDownload" value=""}
+{if $primaryGalleys}
+    {foreach from=$primaryGalleys item=galley}
+        {if $galley->getFileType() == 'application/pdf'}
+            {assign var="publicationId" value=$publication->getId()}
+            {assign var="galleyId" value=$galley->getId()}
+            {assign var="linkDownload" value="{url page='article' op='view' path=$publicationId|to_array:$galleyId}"}
+            {break} {* Para após o primeiro PDF ser encontrado *}
         {/if}
     {/foreach}
-{/foreach}
+{/if}
 
-{assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completou{$downloadUrl}3Portal de Livros Abertos da USP  "}
+{assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completou{$linkDownload}3Portal de Livros Abertos da USP  "}
 
 
 {assign var="noveQuatroCinco" value="aPbMONOGRAFIA/LIVROc06j2023lNACIONAL"}
@@ -513,6 +510,28 @@
     });
 </script>
 <hr>TESTES:<br>
+
+
+
+
+
+
+
+				
+			
+<br>
+<b>Páginas: </b><br>
+<b>Edição: </b>{$issue->getIssueIdentification()}<br>
+<b>Seção: </b>{$section->getLocalizedTitle()|escape}<br>
+<b>Categoria: </b>{foreach from=$categories item=category}{$category->getLocalizedTitle()|escape};{/foreach}<br>
+<b>Idioma: </b><br>
+<b>Link do PDF: </b>{$linkDownload}<br>
+<b>Resumo: </b> {*$publication->getLocalizedData('abstract')*}<br>
+<b>Abstract: </b><br>
+
+
+
+<hr>
 <b>LDR= </b><br>
 <b>005= </b>{$zeroZeroCinco}<br>
 <b>008= </b>{$zeroZeroOito}<br>
