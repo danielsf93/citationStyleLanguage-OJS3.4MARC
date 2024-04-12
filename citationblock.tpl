@@ -511,15 +511,17 @@
 </script>
 <hr>TESTES:<br>
 
-<p>Bem-vindo à {$currentContext->getLocalizedName()}</p>
-{$primaryLocale}<br>
-{$currentLocale}<br>
+<b>Idioma de submissão:</b>{$publication->getData('locale')}<br>
+
+<p>Nome da revista: {$currentContext->getLocalizedName()}</p>
+Idioma da revista: {$primaryLocale}<br>
+Idioma atual: {$currentLocale}<br>
 a{$publication->getLocalizedTitle(null, 'html')|strip_unsafe_html}b<br>
 
 {$publication->getLocalizedTitle('primaryLocale')}<br>
 <b>{$publication->getLocalizedTitle('pt_BR')}<br>
 {$publication->getLocalizedTitle('en')}<br>
-{$publication->getLocalizedTitle('de')}<br>
+{$publication->getLocalizedTitle('')}<br>
 {$publication->getLocalizedTitle('es')}<br></b>
 
 
@@ -540,7 +542,8 @@ a{$publication->getLocalizedTitle(null, 'html')|strip_unsafe_html}b<br>
 <b>Categoria: </b>{foreach from=$categories item=category}{$category->getLocalizedTitle()|escape};{/foreach}<br>
 <b>Idioma: </b><br>
 <b>Link do 1° PDF: </b>{$linkDownload}<br>
-<b>Resumo: </b> {$publication->getLocalizedData('abstract')}<br>
+<b>Resumo: </b> {$publication->getLocalizedData('abstract', 'de')}<br>
+<b>Resumo: </b> {$publication->getLocalizedData('abstract', $localeKey)}<br>
 <b>Abstract: </b><br>
 
 
