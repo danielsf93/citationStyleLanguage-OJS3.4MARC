@@ -520,12 +520,13 @@
 				
 			
 <br>
-<b>Páginas: </b><br>
+{assign var=submissionPages value=$publication->getData('pages')}
+<b>Páginas: </b>{$submissionPages|escape}<br>
 <b>Edição: </b>{$issue->getIssueIdentification()}<br>
 <b>Seção: </b>{$section->getLocalizedTitle()|escape}<br>
 <b>Categoria: </b>{foreach from=$categories item=category}{$category->getLocalizedTitle()|escape};{/foreach}<br>
 <b>Idioma: </b><br>
-<b>Link do PDF: </b>{$linkDownload}<br>
+<b>Link do 1° PDF: </b>{$linkDownload}<br>
 <b>Resumo: </b> {*$publication->getLocalizedData('abstract')*}<br>
 <b>Abstract: </b><br>
 
