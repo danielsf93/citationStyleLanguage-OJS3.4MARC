@@ -511,6 +511,19 @@
 </script>
 <hr>TESTES:<br>
 
+<p>Bem-vindo à {$currentContext->getLocalizedName()}</p>
+{$primaryLocale}<br>
+{$currentLocale}<br>
+a{$publication->getLocalizedTitle(null, 'html')|strip_unsafe_html}b<br>
+
+{$publication->getLocalizedTitle('primaryLocale')}<br>
+<b>{$publication->getLocalizedTitle('pt_BR')}<br>
+{$publication->getLocalizedTitle('en')}<br>
+{$publication->getLocalizedTitle('de')}<br>
+{$publication->getLocalizedTitle('es')}<br></b>
+
+
+
 
 
 
@@ -527,7 +540,7 @@
 <b>Categoria: </b>{foreach from=$categories item=category}{$category->getLocalizedTitle()|escape};{/foreach}<br>
 <b>Idioma: </b><br>
 <b>Link do 1° PDF: </b>{$linkDownload}<br>
-<b>Resumo: </b> {*$publication->getLocalizedData('abstract')*}<br>
+<b>Resumo: </b> {$publication->getLocalizedData('abstract')}<br>
 <b>Abstract: </b><br>
 
 
