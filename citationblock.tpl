@@ -257,21 +257,24 @@
 {/foreach}
 
    
-    {assign var="oitoCincoMeiaA" value="4 zClicar sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
+    {assign var="oitoCincoMeiaA" value="4 z\"Clicar\" sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
 
-{assign var="linkDownload" value=""}
-{if $primaryGalleys}
-    {foreach from=$primaryGalleys item=galley}
-        {if $galley->getFileType() == 'application/pdf'}
-            {assign var="publicationId" value=$publication->getId()}
-            {assign var="galleyId" value=$galley->getId()}
-            {assign var="linkDownload" value="{url page='article' op='view' path=$publicationId|to_array:$galleyId}"}
-            {break} {* Para após o primeiro PDF ser encontrado *}
+{$publicationFiles=$bookFiles}
+{foreach from=$publicationFormats item=format}
+    {pluck_files assign=pubFormatFiles files=$publicationFiles by="publicationFormat" value=$format->getId()}
+    {foreach from=$pubFormatFiles item=file}
+        {assign var=publicationFormatId value=$publicationFormat->getBestId()}
+
+        {* Generate the download URL *}
+        {if $publication->getId() === $monograph->getCurrentPublication()->getId()}
+            {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:$publicationFormatId:$file->getBestId()}{/capture}
+        {else}
+            {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:"version":$publication->getId():$publicationFormatId:$file->getBestId()}{/capture}
         {/if}
     {/foreach}
-{/if}
+{/foreach}
 
-{assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completou{$linkDownload}3Portal de Livros Abertos da USP  "}
+{assign var="oitoCincoMeiaB" value="41z\"Clicar\" sobre o botão para acesso ao texto completou{$downloadUrl}3Portal de Livros Abertos da USP  "}
 
 
 {assign var="noveQuatroCinco" value="aPbMONOGRAFIA/LIVROc06j2023lNACIONAL"}
@@ -335,18 +338,6 @@
 {assign var="rec500CAR" value=sprintf('%04d', strlen($cincoZeroZero) + 3)}
 {assign var="rec500" value="500"|cat:$rec500CAR|cat:sprintf('%05d', $rec500POS - 3)}
 
-
-
-
-
-
-
-
-
-
-
-
-
 {assign var="numAutoresAdicionais" value=count($additionalAuthors)}
 {assign var="rec700All" value=''} 
 
@@ -376,20 +367,6 @@
 {/foreach}
 
 {assign var="rec700All" value=str_replace(" ", "", $rec700All)}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {assign var="additionalAuthorsExporter" value=""}
 {assign var="rec7uuAll" value=''}
@@ -425,17 +402,6 @@
 
 {assign var="rec7uuAll" value=str_replace(" ", "", $rec7uuAll)}
 
-
-
-
-
-
-
-
-
-
-
-
 {assign var="rec856APOS" value=$rec500CAR + $rec500POS}
 {assign var="rec856ACAR" value=sprintf('%04d', strlen($oitoCincoMeiaA) - 1)}
 
@@ -454,14 +420,8 @@
 {assign var="rec945CAR" value=sprintf('%04d', strlen($noveQuatroCinco) + 1)}
 {assign var="rec945" value="945"|cat:$rec945CAR|cat:sprintf('%05d', $rec945POS - 3)}
 
-
-
-
-
-
- 
     <button id="downloadButton" class="botao">Baixar Registro MARC</button>
-	
+
 
 <style>
  
@@ -509,87 +469,7 @@
         });
     });
 </script>
-<hr>TESTES:<br>
-
-<b>Idioma de submissão:</b>{$publication->getData('locale')}<br>
-
-<p>Nome da revista: {$currentContext->getLocalizedName()}</p>
-Idioma da revista: {$primaryLocale}<br>
-Idioma atual: {$currentLocale}<br>
-a{$publication->getLocalizedTitle(null, 'html')|strip_unsafe_html}b<br>
-
-{$publication->getLocalizedTitle('primaryLocale')}<br>
-<b>{$publication->getLocalizedTitle('pt_BR')}<br>
-{$publication->getLocalizedTitle('en')}<br>
-{$publication->getLocalizedTitle('')}<br>
-{$publication->getLocalizedTitle('es')}<br></b>
-
-
-
-
-
-
-
-
-
-				
-			
-<br>
-{assign var=submissionPages value=$publication->getData('pages')}
-<b>Páginas: </b>{$submissionPages|escape}<br>
-<b>Edição: </b>{$issue->getIssueIdentification()}<br>
-<b>Seção: </b>{$section->getLocalizedTitle()|escape}<br>
-<b>Categoria: </b>{foreach from=$categories item=category}{$category->getLocalizedTitle()|escape};{/foreach}<br>
-<b>Idioma: </b><br>
-<b>Link do 1° PDF: </b>{$linkDownload}<br>
-<b>Resumo: </b> {$publication->getLocalizedData('abstract', 'de')}<br>
-<b>Resumo: </b> {$publication->getLocalizedData('abstract', $localeKey)}<br>
-<b>Abstract: </b><br>
-
-
-
-<hr>
-<b>LDR= </b><br>
-<b>005= </b>{$zeroZeroCinco}<br>
-<b>008= </b>{$zeroZeroOito}<br>
-<b>020= </b>{$zeroDoisZero}<br>
-<b>024= </b>{$zeroDoisQuatro}<br>
-<b>040= </b>{$zeroQuatroZero}<br>
-<b>041= </b>{$zeroQuatroUm}<br>
-<b>044= </b>{$zeroQuatroQuatro}<br>
-<b>100= </b>{$umZeroZero}<br>
-<b>245= </b>{$doisQuatroCinco}<br>
-<b>260= </b>{$doisMeiaZero}<br>
-<b>490= </b>{$quatroNoveZero}<br>
-<b>500= </b>{$cincoZeroZero}<br>
-{assign var="additionalAuthorsExport" value=""}
-{foreach from=$publication->getData('authors') item=author name=authorLoop}
-    {if $smarty.foreach.authorLoop.index > 0}
-        {assign var="surname" value=$author->getLocalizedFamilyName()|escape}
-        {assign var="givenName" value=$author->getLocalizedGivenName()|escape}
-        {assign var="orcid" value=$author->getOrcid()|default:''}
-
-        {if $orcid}
-            {assign var="seteZeroZero" value="1 a{$surname}, {$givenName}0{$orcid}4org"}
-        {else}
-            {assign var="seteZeroZero" value="1 a{$surname}, {$givenName}0 4org"}
-        {/if}
-
-        {assign var="additionalAuthorsExport" value="$additionalAuthorsExport{$seteZeroZero}"}
-		<b>700= </b>{$seteZeroZero}<br>
-    {/if}
-{/foreach}
-<b>856a= </b>{$oitoCincoMeiaA}<br>
-<b>856b= </b>{$oitoCincoMeiaB}<br>
-<b>945= </b>{$noveQuatroCinco}<br>
-
-
-
-
-
 </div>
-
-
 
 
 {/if}
